@@ -160,7 +160,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Trivy Scan on Published Image from Docker Hub
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.35.0
         env:
           TRIVY_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           TRIVY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -168,7 +168,8 @@ jobs:
           image-ref: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           format: table
           severity: HIGH,CRITICAL
-          vuln-type: os,library
+          scanners: vuln
           ignore-unfixed: true
           exit-code: "1"
+
           
