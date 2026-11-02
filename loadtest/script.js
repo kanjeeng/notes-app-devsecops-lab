@@ -1,4 +1,5 @@
 // loadtest/script.js
+/* global __ENV */
 import http from 'k6/http';
 import { sleep, check } from 'k6';
 
