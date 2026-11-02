@@ -1,0 +1,128 @@
+name: CI - Sesi 31 Pengujian Code
+
+on:
+  push:
+    branches: [sesi31-loadtest]
+  pull_request:
+    branches: [sesi31-loadtest]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+  APP_PORT: "3000"
+
+jobs:
+  # ------------------------------------------------------------ 1. Lint (S31-01)
+  lint:
+    name: Lint (ESLint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: ESLint
+        run: npm run lint
+
+  # ------------------------------------------------------------ SCA npm (S31-07, Level 2)
+  dependency_audit:
+    name: SCA (npm audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: npm audit (gagal pada temuan tingkat apa pun)
+        run: npm audit --audit-level=low
+
+  # ------------------------------------------------------------ 2. Unit Test + coverage (S31-02)
+  unit_test:
+    name: Unit Test (Jest + coverage)
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Jest dengan coverage (LCOV)
+        run: npm test -- --coverage --coverageReporters=lcov --coverageReporters=text
+      - name: Unggah laporan LCOV
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+          if-no-files-found: error
+
+  # ------------------------------------------------------------ 3. SonarQube Scan (S31-03)
+  sonarqube:
+    name: SonarQube Scan
+    needs: unit_test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Unduh laporan LCOV
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+  # ------------------------------------------------------------ 4. k6 Smoke Test (S31-06)
+  k6_smoke:
+    name: k6 Smoke Test
+    needs: unit_test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Jalankan aplikasi di runner
+        env:
+          PORT: ${{ env.APP_PORT }}
+        run: |
+          nohup npm start > app.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -s -o /dev/null "http://127.0.0.1:${APP_PORT}/"; then echo "App siap"; exit 0; fi
+            sleep 1
+          done
+          echo "App tidak merespons"; cat app.log; exit 1
+      - uses: grafana/setup-k6-action@v1
+      - name: k6 run
+        run: k6 run --summary-export=k6-summary.json -e BASE_URL=http://127.0.0.1:${APP_PORT} loadtest/script.js
+      - name: Unggah ringkasan k6
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-summary
+          path: |
+            k6-summary.json
+            app.log

@@ -1,0 +1,6 @@
+
+D:\SEMENTARA\DevOps-Training\devsecops-lab\notes-app-sesi31\loadtest\script.js
+  17:14  error  '__ENV' is not defined  no-undef
+
+✖ 1 problem (1 error, 0 warnings)
+
