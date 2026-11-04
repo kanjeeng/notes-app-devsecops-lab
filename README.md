@@ -254,14 +254,6 @@ cd ~/devsecops-lab/devsecops-infrastructure-aws
 
 Jika `admin_cidr` berubah: `cd terraform && terraform apply`.
 
-![Output terraform output](docs/images/03-terraform-output.png)
-
-*Gambar 3. `terraform output`. File: `docs/images/03-terraform-output.png`*
-
-![Hasil verify-remote.sh](docs/images/04-verify-remote-node.png)
-
-*Gambar 4. Verifikasi kesehatan node. File: `docs/images/04-verify-remote-node.png`*
-
 | Komponen | Hasil yang diharapkan |
 |---|---|
 | `cloud-init status --wait` | `status: done` |
@@ -280,9 +272,6 @@ nslookup sonar.<domain-anda>        # atau: dig +short sonar.<domain-anda>
 # IP harus sama persis dengan elastic_ip
 ```
 
-![Verifikasi DNS](docs/images/05-dns-nslookup-sonar.png)
-
-*Gambar 5. Hasil `nslookup`. File: `docs/images/05-dns-nslookup-sonar.png`*
 
 > Jangan lanjut ke langkah C sebelum DNS benar. Caddy memerlukan validasi HTTP-01 Let's Encrypt lewat port 80.
 
@@ -312,13 +301,6 @@ Skrip melakukan empat hal: (1) menjalankan SonarQube dan PostgreSQL via Docker C
 | HTTPS | `curl -I https://sonar.<domain-anda>` (dari laptop) | HTTP 200/302, sertifikat valid |
 | Port 9000 | `curl -m 5 http://<elastic_ip>:9000` (dari laptop) | Timeout (aman) |
 
-![Docker ps dan status SonarQube](docs/images/06-sonarqube-docker-ps-status.png)
-
-*Gambar 6. Kontainer SonarQube/PostgreSQL dan status `UP`. File: `docs/images/06-sonarqube-docker-ps-status.png`*
-
-![HTTPS valid dan port 9000 tertutup](docs/images/07-sonarqube-https-dan-port-9000.png)
-
-*Gambar 7. HTTPS 200 OK dan port 9000 timeout. File: `docs/images/07-sonarqube-https-dan-port-9000.png`*
 
 ### D. Konfigurasi Awal SonarQube (browser)
 
@@ -331,13 +313,6 @@ Skrip melakukan empat hal: (1) menjalankan SonarQube dan PostgreSQL via Docker C
 4. **New code definition:** pilih *Follows the instance's default* (Previous version), lalu selesaikan pembuatan project. Pada halaman *Analysis Method* pilih **With GitHub Actions**.
 5. **Token analisis:** *My Account → Security → Generate Tokens*. Nama `github-actions-sesi31`, tipe **Project Analysis Token**, project `Notes App Express`, masa aktif sesuai kebutuhan. **Salin token sekarang**, karena hanya tampil sekali.
 
-![Analysis Method](docs/images/08-sonarqube-analysis-method.png)
-
-*Gambar 8. Pilihan metode analisis (With GitHub Actions). File: `docs/images/08-sonarqube-analysis-method.png`*
-
-![Token analisis SonarQube](docs/images/09-sonarqube-token-analisis.png)
-
-*Gambar 9. Token `github-actions-sesi31` (Project Analysis Token). File: `docs/images/09-sonarqube-token-analisis.png`*
 
 > Sembunyikan atau potong bagian token sebelum screenshot dipublikasikan. Jangan pernah memuat nilai token di repositori.
 
@@ -719,29 +694,7 @@ sonar.sourceEncoding=UTF-8
 | 5 | `ci.yml` | Belum ada workflow pada sumber | Disusun ulang per-job tanpa bypass |
 | 6 | Riwayat Git | Bersih lewat `git init` baru | Dipertahankan |
 
-![Baseline: package.json](docs/images/10-baseline-package-json.png)
 
-*Gambar 10. `package.json` baseline. File: `docs/images/10-baseline-package-json.png`*
-
-![Baseline: loadtest/script.js](docs/images/11-baseline-loadtest-script.png)
-
-*Gambar 11. Skrip k6 baseline. File: `docs/images/11-baseline-loadtest-script.png`*
-
-![Baseline: npm ci](docs/images/12-baseline-npm-ci.png)
-
-*Gambar 12. `npm ci` baseline (21 vulnerabilities). File: `docs/images/12-baseline-npm-ci.png`*
-
-![Baseline: ESLint error](docs/images/13-baseline-eslint-error.png)
-
-*Gambar 13. ESLint: 1 error `__ENV`. File: `docs/images/13-baseline-eslint-error.png`*
-
-![Baseline: Jest coverage](docs/images/14-baseline-jest-coverage.png)
-
-*Gambar 14. Jest baseline dan `coverage/lcov.info`. File: `docs/images/14-baseline-jest-coverage.png`*
-
-![Baseline: npm audit](docs/images/15-baseline-npm-audit-21-vuln.png)
-
-*Gambar 15. `npm audit`: 7 low, 3 moderate, 10 high, 1 critical. File: `docs/images/15-baseline-npm-audit-21-vuln.png`*
 
 **Rincian kerentanan baseline** (paket terdampak antara lain `proxy-addr`, `body-parser`, `express`, `minimatch`, `brace-expansion`, `js-yaml`, `flatted`, `browserslist`, `picomatch`, `form-data`, `qs`, `ajv`, `deepmerge`):
 
@@ -754,9 +707,6 @@ sonar.sourceEncoding=UTF-8
 
 Variabel `__ENV` adalah global bawaan runtime k6, sedangkan ESLint dikonfigurasi untuk Node.js (CommonJS). Anotasi `/* global __ENV */` mendaftarkannya sebagai global yang sah **tanpa mematikan aturan `no-undef`**. Hasil: **0 errors, 0 warnings**.
 
-![Perbaikan ESLint](docs/images/16-fix-eslint-global-env.png)
-
-*Gambar 16. Anotasi `/* global __ENV */`. File: `docs/images/16-fix-eslint-global-env.png`*
 
 ### 8.3 Perbaikan Dependensi
 
@@ -766,17 +716,11 @@ Variabel `__ENV` adalah global bawaan runtime k6, sedangkan ESLint dikonfigurasi
 | `devDependencies` | `@eslint/eslintrc ^3.3.1`, `eslint ^9.9.0`, `jest ^29.7.0`, `nodemon ^3.1.0`, `supertest ^7.0.0` | Sama |
 | `overrides` | (tidak ada) | `deepmerge 2.0.1`, `minimatch ^11.0.1`, `glob ^14.0.2`, `test-exclude ^7.0.1`, `babel-plugin-istanbul ^7.0.0` |
 
-![npm outdated](docs/images/17-npm-outdated.png)
-
-*Gambar 17. `npm outdated`. File: `docs/images/17-npm-outdated.png`*
 
 **Mengapa `npm audit fix --force` dilarang:** perintah itu menurunkan Jest `^29.7.0` menjadi `25.1.0` (rilis 2020), sehingga merusak unit test dan kompatibilitas linter modern.
 
 **Insiden di CI dan penyelesaiannya.** Setelah `glob` dinaikkan ke `^14.0.2`, lingkungan CI yang bersih gagal pada `unit_test` dengan galat `TypeError ... "original" argument must be of type function`. Penyebabnya konflik antara `glob` v14 dan `test-exclude` / `babel-plugin-istanbul` lama bawaan Jest. Solusinya menambahkan `test-exclude ^7.0.1` dan `babel-plugin-istanbul ^7.0.0` ke `overrides`.
 
-![Galat Babel Istanbul di CI](docs/images/18-ci-error-babel-istanbul.png)
-
-*Gambar 18. Galat di CI sebelum override tambahan. File: `docs/images/18-ci-error-babel-istanbul.png`*
 
 ### 8.4 Validasi Lokal Setelah Perbaikan
 
@@ -786,13 +730,7 @@ Variabel `__ENV` adalah global bawaan runtime k6, sedangkan ESLint dikonfigurasi
 | `npm test` | Semua lulus; Lines **87,93%** |
 | `npm audit --audit-level=low` | **found 0 vulnerabilities** |
 
-![npm install bersih: 0 vulnerabilities](docs/images/19-after-npm-install-0-vuln.png)
 
-*Gambar 19. Instal ulang bersih, 0 vulnerabilities. File: `docs/images/19-after-npm-install-0-vuln.png`*
-
-![Jest lokal setelah perbaikan](docs/images/20-after-jest-lokal.png)
-
-*Gambar 20. Jest lokal setelah perbaikan. File: `docs/images/20-after-jest-lokal.png`*
 
 ---
 
@@ -800,9 +738,6 @@ Variabel `__ENV` adalah global bawaan runtime k6, sedangkan ESLint dikonfigurasi
 
 ### 9.1 Run GitHub Actions: Hijau
 
-![Run CI sukses](docs/images/21-run-ci-sukses.png)
-
-*Gambar 21. Seluruh job sukses. File: `docs/images/21-run-ci-sukses.png`*
 
 | Job | Hasil |
 |---|---|
@@ -812,17 +747,6 @@ Variabel `__ENV` adalah global bawaan runtime k6, sedangkan ESLint dikonfigurasi
 | SonarQube Scan | ✅ Terkirim ke server, Quality Gate Passed |
 | k6 Smoke Test | ✅ Threshold lulus, `k6-summary.json` diunggah |
 
-![Log ESLint di CI](docs/images/22-log-ci-eslint.png)
-
-*Gambar 22. Log job `lint`. File: `docs/images/22-log-ci-eslint.png`*
-
-![Log npm ci dan npm audit di CI](docs/images/23-log-ci-npm-audit.png)
-
-*Gambar 23. Log `npm ci` dan `npm audit --audit-level=low`. File: `docs/images/23-log-ci-npm-audit.png`*
-
-![Log Jest dan coverage di CI](docs/images/24-log-ci-jest-coverage.png)
-
-*Gambar 24. Log job `unit_test` beserta tabel coverage. File: `docs/images/24-log-ci-jest-coverage.png`*
 
 **Ringkasan coverage Jest:**
 
@@ -846,27 +770,13 @@ Project `Notes App Express (Sesi 31)`, `https://sonar.<domain-anda>`:
 | Security (awal) | Rating **B**, 1 issue low (`javascript:S5689`), 0 security hotspot |
 | Coverage (Overall Code) | 74,1% dari 61 baris yang harus dicakup |
 
-![Quality Gate Passed (Overall Code)](docs/images/25-sonarqube-quality-gate-overall.png)
-
-*Gambar 25. Quality Gate Passed, Overall Code. File: `docs/images/25-sonarqube-quality-gate-overall.png`*
-
 > Coverage Sonar (74,1%) berbeda dari Line Coverage Jest (87,93%) karena SonarQube menghitung coverage hanya pada berkas `sonar.sources=src` dan memakai definisi baris/kondisi miliknya sendiri.
 
 **Temuan `javascript:S5689`:** *"This framework implicitly discloses version information by default."* Express secara bawaan mengirim header `X-Powered-By: Express` (`src/app.js` baris 6, `const app = express();`). Temuan berstatus Low sehingga Quality Gate tetap lulus.
 
-![Temuan S5689](docs/images/26-sonarqube-issue-s5689.png)
-
-*Gambar 26. Issue `javascript:S5689` (Security, Low). File: `docs/images/26-sonarqube-issue-s5689.png`*
-
-![Detail issue pada src/app.js](docs/images/27-sonarqube-issue-detail-app-js.png)
-
-*Gambar 27. Lokasi issue pada `src/app.js`. File: `docs/images/27-sonarqube-issue-detail-app-js.png`*
 
 **Mitigasi (Shift-Left):** tambahkan `app.disable('x-powered-by');` tepat setelah inisialisasi Express.
 
-![Perbaikan x-powered-by](docs/images/28-fix-x-powered-by.png)
-
-*Gambar 28. `app.disable('x-powered-by')`. File: `docs/images/28-fix-x-powered-by.png`*
 
 **Hasil setelah mitigasi (tab New Code, sejak 2 November 2026):**
 
@@ -877,9 +787,7 @@ Project `Notes App Express (Sesi 31)`, `https://sonar.<domain-anda>`:
 | Duplications | **0,0%** | ≤ 3,0% |
 | Security Hotspots | **0** (Rating A) | - |
 
-![Quality Gate New Code Passed](docs/images/29-sonarqube-new-code-passed.png)
 
-*Gambar 29. Quality Gate Passed, New Code. File: `docs/images/29-sonarqube-new-code-passed.png`*
 
 ### 9.3 k6 Smoke Test
 
@@ -891,29 +799,22 @@ Project `Notes App Express (Sesi 31)`, `https://sonar.<domain-anda>`:
 | Threshold | `http_req_duration: p(95) < 400 ms`; `http_req_failed: rate < 0.01` |
 | Artefak CI | `k6-summary` (`k6-summary.json` dan `app.log`) |
 
-<!-- Letakkan screenshot bukti k6 di sini:
-![k6 smoke test lokal](docs/images/30-k6-smoke-lokal.png)
-*Gambar 30. Ringkasan k6 smoke test lokal (S31-05).*
-
-![Artifact k6 di GitHub Actions](docs/images/31-k6-artifact-ci.png)
-*Gambar 31. Artifact `k6-summary` pada run Actions (S31-06).*
--->
 
 ---
 
 ## 10. Matriks Skenario Pengujian
 
-| ID | Level | Skenario | Hasil yang diharapkan | Status |
-|---|---|---|---|---|
-| S31-01 | 1 | ESLint di job `lint` | Nol error | ✅ 0 errors, 0 warnings |
-| S31-02 | 1 | Jest di job `unit_test` | Semua lulus, coverage tampil | ✅ 5/5, Lines 87,93% |
-| S31-03 | 1 | Scan di job `sonarqube` | Berhasil, hasil tampil di dashboard | ✅ Quality Gate Passed |
-| S31-04 | 1 | Screenshot SonarQube | Memuat project dan metrik utama | ✅ Gambar 25–29 |
-| S31-05 | 1 | k6 smoke lokal | Output dan threshold lulus, screenshot disimpan | Lampirkan screenshot (Gambar 30) |
-| S31-06 | 2 | k6 smoke di CI | Ringkasan tersedia sebagai artifact | Lampirkan screenshot artifact (Gambar 31) |
-| S31-07 | 1 | `npm audit` setelah perbaikan | Tanpa vulnerability | ✅ `found 0 vulnerabilities` |
-| S31-08 | 1 | Pemeriksaan bypass | Tidak ada pola bypass pada `ci.yml` | ✅ (perintah di bawah) |
-| S31-09 | 1 | Run sukses pada repo public | Terlihat di tab Actions tanpa login | ✅ Verifikasi via incognito |
+| ID | Level | Skenario | Hasil yang diharapkan |
+|---|---|---|---|
+| S31-01 | 1 | ESLint di job `lint` | Nol error |
+| S31-02 | 1 | Jest di job `unit_test` | Semua lulus, coverage tampil |
+| S31-03 | 1 | Scan di job `sonarqube` | Berhasil, hasil tampil di dashboard |
+| S31-04 | 1 | Screenshot SonarQube | Memuat project dan metrik utama |
+| S31-05 | 1 | k6 smoke lokal | Output dan threshold lulus, screenshot disimpan |
+| S31-06 | 2 | k6 smoke di CI | Ringkasan tersedia sebagai artifact |
+| S31-07 | 1 | `npm audit` setelah perbaikan | Tanpa vulnerability |
+| S31-08 | 1 | Pemeriksaan bypass | Tidak ada pola bypass pada `ci.yml` |
+| S31-09 | 1 | Run sukses pada repo public | Terlihat di tab Actions tanpa login |
 
 Cek S31-08 secara mandiri:
 
