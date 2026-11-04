@@ -822,34 +822,9 @@ Cek S31-08 secara mandiri:
 grep -nE "\|\| *true|--force|continue-on-error" .github/workflows/ci.yml \
   && echo "TERDETEKSI BYPASS" || echo "Bersih: tidak ada bypass"
 ```
-
 ---
 
-## 11. Bukti Hasil Eksekusi
-
-Gambar yang tersimpan di `docs/images/`:
-
-| Berkas | Isi |
-|---|---|
-| `01-arsitektur-infrastruktur-aws.png` | Arsitektur terintegrasi Sesi 30 dan 31 |
-| `02-alur-pipeline-expressjs-code-testing.png` | Rancangan alur pipeline Sesi 31 |
-| `03-terraform-output.png` | `terraform output` |
-| `04-verify-remote-node.png` | Hasil `verify-remote.sh` |
-| `05-dns-nslookup-sonar.png` | Verifikasi DNS |
-| `06-sonarqube-docker-ps-status.png` | Kontainer dan status SonarQube |
-| `07-sonarqube-https-dan-port-9000.png` | HTTPS valid dan port 9000 tertutup |
-| `08-sonarqube-analysis-method.png` | Pilihan metode analisis |
-| `09-sonarqube-token-analisis.png` | Token analisis (sembunyikan nilainya) |
-| `10`–`15` | Baseline: package.json, script k6, npm ci, ESLint, Jest, npm audit |
-| `16`–`20` | Perbaikan: ESLint global, npm outdated, galat Babel di CI, 0 vuln, Jest lokal |
-| `21`–`24` | Run CI hijau dan log job |
-| `25`–`29` | Dashboard SonarQube dan perbaikan `x-powered-by` |
-| `30-k6-smoke-lokal.png` *(tambahkan sendiri)* | Screenshot k6 lokal |
-| `31-k6-artifact-ci.png` *(tambahkan sendiri)* | Artifact `k6-summary` di Actions |
-
----
-
-## 12. Keputusan Desain
+## 11. Keputusan Desain
 
 | Aspek | Pilihan | Alasan |
 |---|---|---|
@@ -863,7 +838,7 @@ Gambar yang tersimpan di `docs/images/`:
 
 ---
 
-## 13. Troubleshooting
+## 12. Troubleshooting
 
 | Gejala | Penyebab | Solusi |
 |---|---|---|
@@ -884,7 +859,7 @@ Gambar yang tersimpan di `docs/images/`:
 
 ---
 
-## 14. Kesinambungan dari Sesi 30
+## 13. Kesinambungan dari Sesi 30
 
 | Elemen | Dari Sesi 30 | Pada Sesi 31 |
 |---|---|---|
@@ -897,7 +872,7 @@ Gambar yang tersimpan di `docs/images/`:
 
 ---
 
-## 15. Pembersihan Sumber Daya
+## 14. Pembersihan Sumber Daya
 
 ```bash
 # Hemat biaya: matikan EC2 di luar jam praktikum
