@@ -180,7 +180,7 @@ notes-app-devsecops-lab/
 │   ├── main.py                # Titik masuk FastAPI
 │   └── models.py              # Skema Pydantic v2
 ├── tests/test_notes.py        # Unit test pytest
-├── docs/images/               # Gambar arsitektur dan bukti eksekusi
+├── docs/images/               # Gambar arsitektur
 ├── Dockerfile                 # Multi-stage, non-root user, base image dipin
 ├── .dockerignore
 ├── .gitignore
@@ -273,10 +273,6 @@ terraform output
 
 Hasil: **15 resource** dibuat. Output mencakup `elastic_ip`, `instance_id`, `ssh_command`, `sonarqube_url`, dan `dns_instruction`. Kunci privat `devsecops-key.pem` terbentuk di `terraform/` dengan izin `0400`.
 
-![Output terraform apply](docs/images/03-terraform-apply-output.png)
-
-*Gambar 3. Hasil `terraform apply` dan `terraform output`. File: `docs/images/03-terraform-apply-output.png`*
-
 **B.4 Verifikasi kesehatan node (User Data butuh 3–5 menit):**
 
 ```bash
@@ -294,9 +290,6 @@ cd ~/devsecops-lab/devsecops-infrastructure-aws
 | SonarQube dan Caddy | Cek layanan | Belum aktif (normal di Tahap 1) |
 | Security Group | Konsol AWS EC2 | 22 → `admin_cidr`; 80/443 publik; 9000 tertutup |
 
-![Hasil verify-remote.sh](docs/images/04-verify-remote-node.png)
-
-*Gambar 4. Verifikasi kesehatan node. File: `docs/images/04-verify-remote-node.png`*
 
 Jika cloud-init gagal: `sudo tail -n 100 /var/log/devsecops-userdata.log`.
 
@@ -760,29 +753,7 @@ grep -nE "\|\| *true|--ignore-vuln|continue-on-error|--force" .github/workflows/
 
 ---
 
-## 10. Bukti Hasil Eksekusi
-
-Daftar berkas gambar di `docs/images/` yang dipakai README ini:
-
-| Berkas | Isi |
-|---|---|
-| `01-arsitektur-infrastruktur-aws.png` | Arsitektur terintegrasi Sesi 30 dan 31 |
-| `02-alur-pipeline-fastapi-devsecops.png` | Rancangan alur 6 job pipeline |
-| `03-terraform-apply-output.png` | Output `terraform apply` |
-| `04-verify-remote-node.png` | Hasil `verify-remote.sh` |
-| `05-github-secrets.png` | GitHub repository secrets |
-| `06-run1-baseline-gagal.png` | Run #1 (baseline gagal) |
-| `07-log-pytest.png` | Log pytest |
-| `08-log-bandit.png` | Log Bandit |
-| `09-log-pip-audit-baseline.png` | Log pip-audit (7 CVE) |
-| `10-log-gitleaks-baseline.png` | Log Gitleaks baseline |
-| `11-run-final-sukses.png` | Run final hijau |
-| `12-dockerhub-tags.png` | Tag image di Docker Hub |
-| `13-ec2-docker-run.png` *(tambahkan sendiri)* | Bukti `docker pull/run` di EC2 |
-
----
-
-## 11. Keputusan Desain
+## 10. Keputusan Desain
 
 | Aspek | Pilihan | Alasan |
 |---|---|---|
@@ -796,7 +767,7 @@ Daftar berkas gambar di `docs/images/` yang dipakai README ini:
 
 ---
 
-## 12. Troubleshooting
+## 11. Troubleshooting
 
 | Gejala | Penyebab | Solusi |
 |---|---|---|
@@ -815,7 +786,7 @@ Daftar berkas gambar di `docs/images/` yang dipakai README ini:
 
 ---
 
-## 13. Kelanjutan ke Sesi 31
+## 12. Kelanjutan ke Sesi 31
 
 Fondasi yang dibawa dari Sesi 30:
 
@@ -828,7 +799,7 @@ Fondasi yang dibawa dari Sesi 30:
 
 ---
 
-## 14. Pembersihan Sumber Daya
+## 13. Pembersihan Sumber Daya
 
 Hentikan atau hapus infrastruktur AWS bila tidak dipakai agar biaya tidak berjalan.
 
